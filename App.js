@@ -4,14 +4,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'; 
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 import React, {useState, useEffect} from 'react'
 const {Screen, Navigator} = createBottomTabNavigator();
-
-
-
-
-
-
 
 export default function App() {
   const [logado,setLogado] = useState(true)
@@ -238,6 +233,46 @@ export default function App() {
     )
   }
   const Chat = (props)=>{
+    const [msg,setMsg] = useState([])
+    const [inputValue, setInputValue] = useState('');
+    const [responseData, setResponseData] = useState('');
+    const handlePostRequest = async () => {
+      try {
+        // Defina a URL para a sua requisição POST
+        const url = 'https://sprint4-fiap-default-rtdb.firebaseio.com/mensagens.json';
+  
+        // Crie um objeto com os dados do input
+        const data = { input: inputValue };
+  
+        // Faça a requisição POST usando o axios
+        const response = await axios.post(url, data);
+  
+        // Atualize o estado com a resposta da requisição
+        setResponseData(response.data);
+        setInputValue('');
+        fetchData()
+      } catch (error) {
+        console.error('Erro na requisição POST:', error);
+      }
+    };
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('https://sprint4-fiap-default-rtdb.firebaseio.com/mensagens.json');
+        setMsg(response.data); // Armazena os dados no estado
+      } catch (error) {
+        console.error('Erro ao fazer a requisição:', error);
+      } 
+    };
+    useEffect(() => {
+      // Executa a função fetchData imediatamente
+      fetchData();
+  
+      // Define um intervalo para chamar a função fetchData a cada 5 segundos
+      const intervalId = setInterval(fetchData, 5000);
+  
+      // Função de limpeza para parar o intervalo quando o componente for desmontado
+      return () => clearInterval(intervalId);
+    }, []);
     return(
       <SafeAreaView style={{flex:1,marginTop:50,alignItems:'center'}}>
         <Ionicons name='arrow-back' size={30} style={{position:'absolute', left:20}} />
@@ -249,13 +284,18 @@ export default function App() {
           <View style={styles.chatL}>
             <Text style={styles.chatText}>Em que posso ajudar?</Text>
           </View>
-          <View style={styles.chatR}>
-            <Text style={styles.chatText}>Pode me ajudar montando um plano de refeição de 1500 calorias?</Text>
-          </View>
+          {Object.keys(msg).map((key) => ( 
+            <View style={styles.chatR}>
+        <Text key={key} style={styles.chatText}>
+          {msg[key].input}
+        </Text>
         </View>
-        <View style={{width:'90%', display:'flex', flexDirection:'row', flexBasis:'center'}}>
-          <TextInput style={styles.chatInput} placeholder='Digite sua mensagem...'/>
-          <Ionicons style={{position:'absolute', right:10, bottom:15}} name='send' size={15}></Ionicons>
+      ))}
+        </View>
+        <View style={{width:'80%', display:'flex', flexDirection:'row', flexBasis:'center'}}>
+          <TextInput style={styles.chatInput} onChangeText={(text) => setInputValue(text)}
+        value={inputValue} placeholder='Digite sua mensagem...'/>
+          <Ionicons onPress={handlePostRequest} style={{position:'absolute', right:10, bottom:15}} name='send' size={15}></Ionicons>
         </View>
       </SafeAreaView>
     )
