@@ -292,10 +292,10 @@ export default function App() {
         </View>
       ))}
         </View>
-        <View style={{width:'80%', display:'flex', flexDirection:'row', flexBasis:'center'}}>
+        <View style={{width:'80%', display:'flex', flexDirection:'row',alignItems:'center', gap:10, flexBasis:'center'}}>
           <TextInput style={styles.chatInput} onChangeText={(text) => setInputValue(text)}
         value={inputValue} placeholder='Digite sua mensagem...'/>
-          <Ionicons onPress={handlePostRequest} style={{position:'absolute', right:10, bottom:15}} name='send' size={15}></Ionicons>
+          <Ionicons onPress={handlePostRequest} style={{backgroundColor:'lightblue',borderRadius:10,padding:15}}  name='send' size={15}></Ionicons>
         </View>
       </SafeAreaView>
     )
@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
     backgroundColor:'lightblue',
     borderRadius:10,
     padding:10,
-    width:'100%'
+    width:'90%'
   },
   refeicao:{
     backgroundColor: 'lightblue',
