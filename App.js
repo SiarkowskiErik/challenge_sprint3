@@ -284,7 +284,7 @@ export default function App() {
           <View style={styles.chatL}>
             <Text style={styles.chatText}>Em que posso ajudar?</Text>
           </View>
-          {Object.keys(msg).map((key) => ( 
+          {msg && Object.keys(msg).map((key) => ( 
             <View style={styles.chatR}>
         <Text key={key} style={styles.chatText}>
           {msg[key].input}
